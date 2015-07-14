@@ -1,0 +1,13 @@
+		<div ng-controller="PageCtrl">
+
+			<div ng-controller="FilterCtrl">
+				<p>
+					<select ng-model="sortfilter.index" ng-options="option as option for option in options"></select>
+					<input ng-hide="hideme" type="text" name="lfilter" ng-model="sortfilter.index" readonly/></p>
+			</div>
+			<div ng-controller="StuffCtrl">
+			  <div><span-tag/></div>
+			  <div ng-hide="hideme" ><para-tag/></div>
+			  <div><ul-tag/></div>
+			</div>
+		</div>

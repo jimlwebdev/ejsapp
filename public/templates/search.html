@@ -1,0 +1,23 @@
+<section>
+	
+		<div ng-controller="PageCtrl">
+			<section id="articles">
+				<div ng-if="article.status === 'success'">
+					<h2>article titles</h2>
+					<p ng-repeat="article in article.articles"><b>{{article.title}}</b> {{article.date}}</p>
+				</div>
+			</section>
+			<section id="specialty">
+				<div ng-if="specialty.status === 'success'">
+					<h2>specialty titles</h2>
+					<p ng-repeat="article in specialty.articles"><b>{{article.title}}</b> {{article.date}}</p>
+				</div>
+			</section>
+			<section id="drblog">
+				<div ng-if="drblog.status === 'success'">
+					<h2>dr blog titles</h2>
+					<p ng-repeat="article in drblog.articles"><b>{{article.title}}</b> {{article.date}}</p>
+				</div>
+			</section>
+		</div>
+</section>

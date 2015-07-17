@@ -6,8 +6,12 @@ ejs.factory.sharedFactory = function(newProvider){
 	return {
 		searchFilters : {
 			startDate : getSearch.y2kdate,
-			endDate : getSearch.today
-		}
+			endDate : getSearch.today,
+			minDate : '2000-06-29',
+			maxDate : getSearch.today,
+			searchword : 'fda'
+		},
+		searchResults : null
 	}
 }
 

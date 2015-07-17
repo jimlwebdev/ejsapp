@@ -1,23 +1,25 @@
-<section>
-	
 		<div ng-controller="PageCtrl">
+			<section id="input">
+				<p><input type="text" name="searchword" ng-model="searchFilters.searchword"/> <srch-button/></p>
+				<p><datepicker ng-model="searchFilters.endDate" min-date="searchFilters.minDate" max-date="searchFilters.maxDate" show-weeks="true"></datepicker></p>
+				<p><filter-button/></p>
+			</section>
 			<section id="articles">
-				<div ng-if="article.status === 'success'">
-					<h2>article titles</h2>
-					<p ng-repeat="article in article.articles"><b>{{article.title}}</b> {{article.date}}</p>
+				<div ng-if="searchResults.article.status === 'success'">
+					<h2>article titles {{searchResults.article.count}}</h2>
+					<p ng-repeat="article in searchResults.article.articles" ng-if="article.date !== 'dontshow'"><b>{{article.title}}</b> {{article.date}}</p>
 				</div>
 			</section>
 			<section id="specialty">
-				<div ng-if="specialty.status === 'success'">
-					<h2>specialty titles</h2>
-					<p ng-repeat="article in specialty.articles"><b>{{article.title}}</b> {{article.date}}</p>
+				<div ng-if="searchResults.specialty.status === 'success'">
+					<h2>specialty titles {{searchResults.specialty.count}}</h2>
+					<p ng-repeat="article in searchResults.specialty.articles" ng-if="article.date !== 'dontshow'"><b>{{article.title}}</b> {{article.date}}</p>
 				</div>
 			</section>
 			<section id="drblog">
-				<div ng-if="drblog.status === 'success'">
-					<h2>dr blog titles</h2>
-					<p ng-repeat="article in drblog.articles"><b>{{article.title}}</b> {{article.date}}</p>
+				<div ng-if="searchResults.drblog.status === 'success'">
+					<h2>dr blog titles {{searchResults.drblog.count}}</h2>
+					<p ng-repeat="article in searchResults.drblog.articles" ng-if="article.date !== 'dontshow'"><b>{{article.title}}</b> {{article.date}}</p>
 				</div>
 			</section>
 		</div>
-</section>

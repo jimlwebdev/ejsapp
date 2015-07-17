@@ -1,6 +1,6 @@
 
 ejs.namespace('nerdsaid.module');
-ejs.module.webapp = angular.module("searchapp", ['ngRoute']);
+ejs.module.webapp = angular.module("searchapp", ['ui.bootstrap','ngRoute']);
 
 ejs.module.webapp.config(function ($routeProvider) {
     $routeProvider

@@ -3,7 +3,7 @@ ejs.provider.newProvider = function(){
 	var rightnow = new Date();
 	var search = {
 			processor : 'https://mb3_rpc.themedicalbag.com/elastica_search_processor.php?',
-			params : 'mode=search&word=fda&index=articles&from=0&limit=99&channel_id=',
+			params : 'mode=search&index=articles&from=0&limit=99&channel_id=&word=',
 			article : '&type=article',
 			specialty : '&type=specialty',
 			drblog : '&type=dr_blog',

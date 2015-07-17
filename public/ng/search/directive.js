@@ -1,25 +1,41 @@
 ejs.namespace('ejs.directives');
-ejs.directives.paraTag = function() {
-	return {
-		restrict: 'E',
-		template:'<p ng-repeat="data in myData.what">{{data}}</p>',
-		replace:true
-	};
+ejs.directives.srchButton = function() {
+  return {
+    restrict: 'E',
+    scope: false,
+    template: '<button type="button" srch-click>search</button>'
+  };
 }
-ejs.directives.spanTag = function() {
-	return {
-		restrict: 'E',
-		template:'<span ng-repeat="data in myData.what">{{data}}</span>',
-		replace:true
-	};
+ejs.directives.srchClick = function(storageService) {
+  return {
+    restrict: 'A',
+    link: function(scope, element, attrs) {
+		element.bind("mouseup", function(){
+			storageService.getData();
+		});
+    }
+  };
 }
-ejs.directives.ulTag = function() {
-	return {
-		restrict: 'E',
-		template:'<ul><li ng-repeat="data in myData.what">{{data}}</li></ul>',
-		replace:true
-	};
+ejs.directives.filterButton = function() {
+  return {
+    restrict: 'E',
+    scope: false,
+    template: '<button type="button" filter-click>filter</button>'
+  };
 }
-ejs.module.webapp.directive('spanTag',[ejs.directives.spanTag]);
-ejs.module.webapp.directive('paraTag',[ejs.directives.paraTag]);
-ejs.module.webapp.directive('ulTag',[ejs.directives.ulTag]);
+ejs.directives.filterClick = function(filterService,sharedFactory) {
+  return {
+    restrict: 'A',
+    link: function(scope, element, attrs) {
+		element.bind("mouseup", function(){
+			filterService.getData().then(function(data){
+				sharedFactory.searchResults = data;
+			});
+		});
+    }
+  };
+}
+ejs.module.webapp.directive('srchButton',[ejs.directives.srchButton]);
+ejs.module.webapp.directive('srchClick',['storageService',ejs.directives.srchClick]);
+ejs.module.webapp.directive('filterButton',[ejs.directives.filterButton]);
+ejs.module.webapp.directive('filterClick',['filterService','sharedFactory',ejs.directives.filterClick]);

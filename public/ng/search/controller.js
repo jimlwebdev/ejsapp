@@ -1,11 +1,11 @@
 ejs.namespace('ejs.controller');
-ejs.controller.PageCtrl = function($scope,filterService,sharedFactory){
-	filterService.getData(sharedFactory).then(
-		function(data) {
-			$scope.article = data.article;
-			$scope.specialty = data.specialty;
-			$scope.drblog = data.drblog;
+ejs.controller.PageCtrl = function($window,$scope,sharedFactory){
+	delete $window.sessionStorage.tmbsearch;
+	$scope.$watch(function(){return sharedFactory.searchResults},function(newvalue,oldvalue){
+			$scope.searchFilters = sharedFactory.searchFilters;
+		if(newvalue !== oldvalue){
+			$scope.searchResults = sharedFactory.searchResults;
 		}
-	);
+	},true);
 }
-ejs.module.webapp.controller('PageCtrl',['$scope', 'filterService', 'sharedFactory',ejs.controller.PageCtrl]);
+ejs.module.webapp.controller('PageCtrl',['$window','$scope', 'sharedFactory',ejs.controller.PageCtrl]);

@@ -1,32 +1,53 @@
-
 ejs.namespace('ejs.service');
 
-ejs.service.filterService = function($q,dataService){
-	this.getData = function(sharedFactory){
+ejs.service.filterService = function($q,$window,sharedFactory){
+	this.compareDate = '';
+	this.data = '';
+	this.getData = function(){
 		var deferred = $q.defer();
-		dataService.getData().then(
-			function(data) {
-				deferred.resolve(data);
-			}
-		);
+		this.compareDate = sharedFactory.searchFilters.endDate;
+		this.data = JSON.parse($window.sessionStorage.tmbsearch);
+		angular.forEach(this.data,function(category,keyC){
+			var count = 0;
+			angular.forEach(category.articles,function(story,keyS){
+				var storyDateYY = parseInt(story.date.substr(0,4),10),
+					storyDateMM = parseInt(story.date.substr(5,2),10),
+					storyDateDD = parseInt(story.date.substr(8,2),10),
+					storyDateYYMMDD = new Date(storyDateYY,storyDateMM,storyDateDD,0,0,0);
+					if(this.compareDate > storyDateYYMMDD){
+						story.date = 'dontshow';
+					} else {
+						count++;
+					}
+				var stophere;
+			},this);
+			category.count = count;
+		},this);
+		deferred.resolve(this.data);
 		return deferred.promise;
 	}
 }
 
-ejs.service.dataService = function($http,$q,$filter,newProvider){
+ejs.service.dataService = function($http){
+	this.doSearch = function(params){
+		return $http.get(params);
+	}
+}
+
+ejs.service.searchService = function($q,$filter,newProvider,dataService,sharedFactory){
 	this.getData = function(){
 		var getSearch = newProvider.getSearch(),
 			deferred = $q.defer(),
-			article = getSearch.processor + getSearch.params + getSearch.article,
-			specialty = getSearch.processor + getSearch.params + getSearch.specialty,
-			drblog = getSearch.processor + getSearch.params + getSearch.drblog;
+			searchfor = getSearch.processor + getSearch.params + sharedFactory.searchFilters.searchword,
+			article =  searchfor + getSearch.article,
+			specialty = searchfor + getSearch.specialty,
+			drblog = searchfor + getSearch.drblog;
 			
 			var getObject = {
-				'article' : $http.get(article),
-				'specialty' : $http.get(specialty),
-				'drblog' : $http.get(drblog)
+				'article' : dataService.doSearch(article),
+				'specialty' : dataService.doSearch(specialty),
+				'drblog' : dataService.doSearch(drblog)
 			};
-			
 			
 			$q.all(getObject).then(
 				function (data) {
@@ -42,7 +63,7 @@ ejs.service.dataService = function($http,$q,$filter,newProvider){
 						rtnObject.article = JSON.parse(articles),
 						rtnObject.specialty = JSON.parse(specialty),
 						rtnObject.drblog = JSON.parse(drblog);
-						
+					
 					deferred.resolve(rtnObject);
 						
 				},
@@ -54,5 +75,22 @@ ejs.service.dataService = function($http,$q,$filter,newProvider){
 			return deferred.promise;
 	}
 }
-ejs.module.webapp.service('filterService',['$q','dataService',ejs.service.filterService]);
-ejs.module.webapp.service('dataService',['$http','$q','$filter','newProvider',ejs.service.dataService]);
+
+ejs.service.storageService = function($q,$window,searchService,sharedFactory){
+	this.getData = function(){
+		var deferred = $q.defer();
+		searchService.getData().then(
+			function(data) {
+				$window.sessionStorage.tmbsearch = JSON.stringify(data);
+				sharedFactory.searchResults = data;
+				deferred.resolve(data);
+			}
+		);
+	}
+}
+
+
+ejs.module.webapp.service('storageService',['$q', '$window', 'searchService', 'sharedFactory',ejs.service.storageService]);
+ejs.module.webapp.service('filterService',['$q','$window', 'sharedFactory',ejs.service.filterService]);
+ejs.module.webapp.service('dataService',['$http',ejs.service.dataService]);
+ejs.module.webapp.service('searchService',['$q', '$filter', 'newProvider', 'dataService', 'sharedFactory',ejs.service.searchService]);

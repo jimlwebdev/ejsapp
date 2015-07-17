@@ -1,11 +1,11 @@
 ejs.namespace('ejs.service');
 
-ejs.service.filterService = function($q,$window,sharedFactory){
+ejs.service.filterService = function($q,$window){
 	this.compareDate = '';
 	this.data = '';
-	this.getData = function(){
+	this.getData = function(endDate){
 		var deferred = $q.defer();
-		this.compareDate = sharedFactory.searchFilters.endDate;
+		this.compareDate = endDate;
 		this.data = JSON.parse($window.sessionStorage.tmbsearch);
 		angular.forEach(this.data,function(category,keyC){
 			var count = 0;
@@ -35,10 +35,10 @@ ejs.service.dataService = function($http){
 }
 
 ejs.service.searchService = function($q,$filter,newProvider,dataService,sharedFactory){
-	this.getData = function(){
+	this.getData = function(searchword){
 		var getSearch = newProvider.getSearch(),
 			deferred = $q.defer(),
-			searchfor = getSearch.processor + getSearch.params + sharedFactory.searchFilters.searchword,
+			searchfor = getSearch.processor + getSearch.params + searchword,
 			article =  searchfor + getSearch.article,
 			specialty = searchfor + getSearch.specialty,
 			drblog = searchfor + getSearch.drblog;
@@ -76,21 +76,21 @@ ejs.service.searchService = function($q,$filter,newProvider,dataService,sharedFa
 	}
 }
 
-ejs.service.storageService = function($q,$window,searchService,sharedFactory){
-	this.getData = function(){
+ejs.service.storageService = function($q,$window,searchService){
+	this.getData = function(searchword){
 		var deferred = $q.defer();
-		searchService.getData().then(
+		searchService.getData(searchword).then(
 			function(data) {
 				$window.sessionStorage.tmbsearch = JSON.stringify(data);
-				sharedFactory.searchResults = data;
 				deferred.resolve(data);
 			}
 		);
+		return deferred.promise;
 	}
 }
 
 
-ejs.module.webapp.service('storageService',['$q', '$window', 'searchService', 'sharedFactory',ejs.service.storageService]);
-ejs.module.webapp.service('filterService',['$q','$window', 'sharedFactory',ejs.service.filterService]);
+ejs.module.webapp.service('storageService',['$q', '$window', 'searchService', ejs.service.storageService]);
+ejs.module.webapp.service('filterService',['$q','$window',ejs.service.filterService]);
 ejs.module.webapp.service('dataService',['$http',ejs.service.dataService]);
-ejs.module.webapp.service('searchService',['$q', '$filter', 'newProvider', 'dataService', 'sharedFactory',ejs.service.searchService]);
+ejs.module.webapp.service('searchService',['$q', '$filter', 'newProvider', 'dataService', ejs.service.searchService]);

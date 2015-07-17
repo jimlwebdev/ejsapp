@@ -8,4 +8,4 @@ ejs.controller.PageCtrl = function($window,$scope,sharedFactory){
 		}
 	},true);
 }
-ejs.module.webapp.controller('PageCtrl',['$window','$scope', 'sharedFactory',ejs.controller.PageCtrl]);
+ejs.module.webapp.controller('PageCtrl',['$window','$scope','sharedFactory',ejs.controller.PageCtrl]);

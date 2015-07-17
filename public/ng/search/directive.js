@@ -6,12 +6,14 @@ ejs.directives.srchButton = function() {
     template: '<button type="button" srch-click>search</button>'
   };
 }
-ejs.directives.srchClick = function(storageService) {
+ejs.directives.srchClick = function(storageService,sharedFactory) {
   return {
     restrict: 'A',
     link: function(scope, element, attrs) {
 		element.bind("mouseup", function(){
-			storageService.getData();
+			storageService.getData(sharedFactory.searchFilters.searchword).then(function(data){
+				sharedFactory.searchResults = data;
+			});
 		});
     }
   };
@@ -28,7 +30,7 @@ ejs.directives.filterClick = function(filterService,sharedFactory) {
     restrict: 'A',
     link: function(scope, element, attrs) {
 		element.bind("mouseup", function(){
-			filterService.getData().then(function(data){
+			filterService.getData(sharedFactory.searchFilters.endDate).then(function(data){
 				sharedFactory.searchResults = data;
 			});
 		});
@@ -36,6 +38,6 @@ ejs.directives.filterClick = function(filterService,sharedFactory) {
   };
 }
 ejs.module.webapp.directive('srchButton',[ejs.directives.srchButton]);
-ejs.module.webapp.directive('srchClick',['storageService',ejs.directives.srchClick]);
+ejs.module.webapp.directive('srchClick',['storageService','sharedFactory',ejs.directives.srchClick]);
 ejs.module.webapp.directive('filterButton',[ejs.directives.filterButton]);
 ejs.module.webapp.directive('filterClick',['filterService','sharedFactory',ejs.directives.filterClick]);
